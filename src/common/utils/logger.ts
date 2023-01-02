@@ -1,5 +1,5 @@
 import stringify from "fast-safe-stringify";
-import * as moment from "moment";
+import moment from "moment";
 import * as winston from "winston";
 import "winston-daily-rotate-file";
 import { AppConfig } from "../../infrastructure/configs";

@@ -1,14 +1,15 @@
-import * as cors from "cors";
-import * as express from "express";
-import * as http from "http";
+import cors from "cors";
+import express from "express";
 import "reflect-metadata";
-import * as SwaggerUi from "swagger-ui-express";
+import SwaggerUi from "swagger-ui-express";
 import { errorHandler } from "./common/middlewares/error-handler";
 import { loggingMiddleware } from "./common/middlewares/logging.middleware";
 import { Logger } from "./common/utils/logger";
 import { ControllerList } from "./controllers";
 import { BaseController } from "./controllers/base.controller";
 import { AppConfig } from "./infrastructure/configs";
+import http from "http";
+import { ServerSocket } from "./socket";
 
 async function bootstrap() {
 	const app = express();
@@ -45,17 +46,17 @@ async function bootstrap() {
 	app.use(errorHandler);
 
 	// start server
-	const HOST = AppConfig.HOST;
 	const PORT = AppConfig.PORT;
-	const PROTOCOL = AppConfig.PROTOCOL;
 
-	// http.createServer(app).listen(PORT, HOST, () => {
-	// 	Logger.info(`Server ready at ${PROTOCOL}://${HOST}:${PORT}`, "Bootstrap");
-	// 	// console.log(`Server ready at ${PROTOCOL}://${HOST}:${PORT}`);
-	// });
+	const httpServer = http.createServer(app);
+	new ServerSocket(httpServer);
 
-	app.listen(PORT, () => {
-		Logger.info(`Server ready at ${PROTOCOL}://${HOST}:${PORT}`, "Bootstrap");
+	httpServer.listen(PORT, () => {
+		Logger.info(`Server is ready on port ${PORT}`, "Bootstrap");
 	});
+
+	// app.listen(PORT, () => {
+	// 	Logger.info(`Server is ready on port ${PORT}`, "Bootstrap");
+	// });
 }
 bootstrap();
